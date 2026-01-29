@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kumpulkan Tugas</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>📚 Pengumpulan Tugas</h1>
+
+  <form method="POST" action="/kumpul" enctype="multipart/form-data">
+    <input name="nama" placeholder="Nama Mahasiswa" required>
+    <input name="matkul" placeholder="Mata Kuliah" required>
+    <input name="judul" placeholder="Judul Tugas" required>
+    <input type="file" name="file" required>
+    <button>Kumpulkan</button>
+  </form>
+
+  <a href="/data-tugas" class="link">📄 Lihat Data Tugas</a>
+</div>
+
+</body>
+</html>
