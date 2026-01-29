@@ -6,40 +6,37 @@ const path = require("path");
 const multer = require("multer");
 const fs = require("fs");
 
-// ====== SAFE START (ANTI CRASH) ======
-const UPLOAD_DIR = path.join(__dirname, "uploads");
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR);
+// BUAT FOLDER UPLOAD JIKA BELUM ADA
+if (!fs.existsSync("uploads")) {
+  fs.mkdirSync("uploads");
 }
 
-const VIEWS_DIR = path.join(__dirname, "views");
-const PUBLIC_DIR = path.join(__dirname, "public");
-
-// ===================================
-
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(PUBLIC_DIR));
-app.use("/uploads", express.static(UPLOAD_DIR));
+app.use(express.static("public"));
+app.use("/uploads", express.static("uploads"));
 
 let tugas = [];
 
-// UPLOAD CONFIG
+// MULTER CONFIG
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, UPLOAD_DIR),
+  destination: (req, file, cb) => cb(null, "uploads"),
   filename: (req, file, cb) =>
     cb(null, Date.now() + "-" + file.originalname)
 });
+
 const upload = multer({ storage });
 
-// ROUTES
+// HALAMAN KUMPUL
 app.get("/", (req, res) => {
-  res.sendFile(path.join(VIEWS_DIR, "index.html"));
+  res.sendFile(path.join(__dirname, "views", "index.html"));
 });
 
+// HALAMAN DATA
 app.get("/data-tugas", (req, res) => {
-  res.sendFile(path.join(VIEWS_DIR, "data.html"));
+  res.sendFile(path.join(__dirname, "views", "data.html"));
 });
 
+// SIMPAN TUGAS
 app.post("/kumpul", upload.single("file"), (req, res) => {
   const { nama, matkul, judul } = req.body;
 
@@ -47,24 +44,26 @@ app.post("/kumpul", upload.single("file"), (req, res) => {
     nama,
     matkul,
     judul,
-    file: req.file ? req.file.filename : null,
+    file: req.file ? req.file.filename : "",
     waktu: new Date().toLocaleString("id-ID")
   });
 
   res.redirect("/");
 });
 
+// API DATA
 app.get("/data", (req, res) => {
   res.json(tugas);
 });
 
+// HAPUS
 app.get("/hapus/:id", (req, res) => {
   tugas.splice(req.params.id, 1);
   res.redirect("/data-tugas");
 });
 
-// ====== CLOUD SAFE PORT ======
+// PORT RAILWAY (WAJIB)
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log("Server jalan di port", PORT);
-});
+app.listen(PORT, () =>
+  console.log("Server jalan di port", PORT)
+);
