@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Data Tugas</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>📄 Data Tugas</h1>
+
+  <select id="filter">
+    <option value="">Semua Mata Kuliah</option>
+  </select>
+
+  <ul id="list"></ul>
+
+  <a href="/" class="link">⬅ Kembali</a>
+</div>
+
+<script>
+let semuaData = [];
+
+fetch("/data")
+  .then(res => res.json())
+  .then(data => {
+    semuaData = data;
+    render(data);
+    isiFilter(data);
+  });
+
+function render(data) {
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  data.forEach((t, i) => {
+    list.innerHTML += `
+      <li>
+        <b>${t.nama}</b><br>
+        ${t.matkul} — ${t.judul}<br>
+        🕒 ${t.waktu}<br>
+        📎 <a href="/uploads/${t.file}" target="_blank">File</a><br>
+        <a href="/hapus/${i}" onclick="return confirm('Yakin hapus data?')">
+          ❌ Hapus
+        </a>
+      </li>
+    `;
+  });
+}
+
+function isiFilter(data) {
+  const filter = document.getElementById("filter");
+  const matkul = [...new Set(data.map(d => d.matkul))];
+
+  matkul.forEach(m => {
+    const opt = document.createElement("option");
+    opt.value = m;
+    opt.textContent = m;
+    filter.appendChild(opt);
+  });
+
+  filter.onchange = () => {
+    if (!filter.value) render(semuaData);
+    else render(semuaData.filter(d => d.matkul === filter.value));
+  };
+}
+</script>
+
+</body>
+</html>
