@@ -62,8 +62,7 @@ app.get("/hapus/:id", (req, res) => {
   res.redirect("/data-tugas");
 });
 
-// PORT RAILWAY (WAJIB)
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () =>
-  console.log("Server jalan di port", PORT)
-);
+const PORT = process.env.PORT || 3000; // Menggunakan port dari Railway, jika tidak ada baru pakai 3000
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("Server jalan di port", PORT);
+});
